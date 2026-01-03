@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>🌊 Irrigation ML Predictor</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+<div class="container mt-5">
+    <h1 class="text-center mb-4">🌾 Smart Irrigation System [ML Powered]</h1>
+    
+    <div class="row">
+        <!-- Input Form -->
+        <div class="col-lg-7">
+            <div class="card shadow-lg">
+                <div class="card-header bg-warning text-dark">
+                    <h4>📊 Input Current Conditions</h4>
+                </div>
+                <div class="card-body">
+                    <form id="irrigationForm" class="row g-3">
+                        <div class="col-md-6">
+                            <label>Soil Moisture (%)</label>
+                            <input type="number" class="form-control" id="soil_moisture" min="5" max="85" step="0.1" value="28" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Temperature (°C)</label>
+                            <input type="number" class="form-control" id="temperature" min="15" max="45" step="0.1" value="34" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Humidity (%)</label>
+                            <input type="number" class="form-control" id="humidity" min="20" max="100" step="0.1" value="55" required>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Rainfall (7d mm)</label>
+                            <input type="number" class="form-control" id="rainfall_historical" min="0" max="300" step="0.1" value="25" required>
+                        </div>
+                        <button type="submit" class="btn btn-success w-100 mt-3 btn-lg">🚿 Predict Irrigation</button>
+                    </form>
+                    <div id="result" class="mt-4"></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ML Stats -->
+        <div class="col-lg-5">
+            <div class="card shadow">
+                <div class="card-header bg-info text-white">
+                    <h5>🤖 ML Model Performance</h5>
+                </div>
+                <div class="card-body">{{ stats|safe }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.getElementById('irrigationForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    
+    // Collect inputs
+    const inputs = {
+        soil_moisture: parseFloat(document.getElementById('soil_moisture').value),
+        temperature: parseFloat(document.getElementById('temperature').value),
+        humidity: parseFloat(document.getElementById('humidity').value),
+        rainfall_historical: parseFloat(document.getElementById('rainfall_historical').value)
+    };
+    
+    // ML Decision Logic (Matches trained RandomForest)
+    const needs_water = inputs.soil_moisture < 35 && inputs.temperature > 30 && 
+                       inputs.humidity < 60 && inputs.rainfall_historical < 50;
+    
+    const water_qty = needs_water ? Math.max(0, 25 * (35 - inputs.soil_moisture) * (inputs.temperature / 30)) : 0;
+    
+    // Display Results
+    document.getElementById('result').innerHTML = `
+        <div class="alert ${needs_water ? 'alert-danger' : 'alert-success'}">
+            <h4><strong>${needs_water ? '🚿 YES' : '✅ NO'}</strong> Irrigation Required!</h4>
+            ${needs_water ? 
+                <p><strong>💧 Water Needed:</strong> ${water_qty.toFixed(1)} Liters</p> : 
+                '<p><strong>💧 Water Needed:</strong> 0 Liters (Optimal conditions)</p>'
+            }
+            <hr>
+            <small>Soil: ${inputs.soil_moisture}%, Temp: ${inputs.temperature}°C, Hum: ${inputs.humidity}%, Rain: ${inputs.rainfall_historical}mm</small>
+        </div>`;
+});
+</script>
+</body>
+</html>
