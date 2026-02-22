@@ -1,8 +1,5 @@
 {
-    "css.lint.unknownVendorSpecificProperties": "ignore",
-    "css.validate": false,
-    "css.lint.important": "warning",
-    "files.associations": {
-        "*.css": "css"
-    }
+    "github-actions.workflows.pinned.workflows": [
+        "dynamic/pages/pages-build-deployment"
+    ]
 }
