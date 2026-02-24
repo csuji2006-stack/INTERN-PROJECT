@@ -1,0 +1,83 @@
+/* Smart Irrigation ML System - Perfect CSS */
+body {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    min-height: 100vh;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.main-card {
+    border-radius: 25px !important;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.3) !important;
+    backdrop-filter: blur(10px);
+    border: none;
+}
+
+.predict-btn {
+    background: linear-gradient(45deg, #00b894, #00cec9) !important;
+    border: none !important;
+    font-size: 1.5rem;
+    padding: 15px;
+    transition: all 0.3s ease;
+}
+
+.predict-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 10px 25px rgba(0,184,148,0.4);
+}
+
+.result-yes {
+    background: linear-gradient(45deg, #ff6b6b, #ee5a52) !important;
+    color: rgb(119, 83, 83) !important;
+    border-radius: 20px !important;
+}
+
+.result-no {
+    background: linear-gradient(45deg, #00b894, #00cec9) !important;
+    color: white !important;
+    border-radius: 20px !important;
+}
+
+.big-result {
+    font-size: 3.5rem;
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+}
+
+.form-control-lg {
+    border-radius: 15px;
+    border: 2px solid #5b89aa;
+    padding: 12px;
+    font-size: 1.2rem;
+}
+
+.form-control-lg:focus {
+    border-color: #00b894;
+    box-shadow: 0 0 0 0.2rem rgba(0,184,148,0.25);
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+}
+
+.btn-success {
+    background: linear-gradient(45deg, #00b894, #00cec9);
+    border: none;
+}
+
+.text-shadow {
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+    .big-result {
+        font-size: 2.5rem !important;
+    }
+    
+    .predict-btn {
+        font-size: 1.2rem !important;
+        padding: 12px !important;
+    }
+}

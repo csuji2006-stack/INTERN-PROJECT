@@ -1,0 +1,25 @@
+{
+  "name": "intern-project",
+  "version": "1.0.0",
+  "description": "*Input*: Soil Moisture, Temperature, Humidity, Rainfall(7d)  \r *Output*: Irrigation Required? (Yes/No) + Water Quantity (Liters)",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/csuji2006-stack/INTERN-PROJECT.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/csuji2006-stack/INTERN-PROJECT/issues"
+  },
+  "homepage": "https://github.com/csuji2006-stack/INTERN-PROJECT#readme",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

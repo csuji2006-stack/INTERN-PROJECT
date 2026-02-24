@@ -1,5 +1,0 @@
-body { background: linear-gradient(135deg, #74b9ff, #0984e3); min-height: 100vh; }
-.card { border-radius: 20px; border: none; }
-.btn-success { background: linear-gradient(45deg, #00b894, #00cec9); border: none; }
-.alert-danger { box-shadow: 0 4px 15px rgba(220,53,69,0.3); }
-.alert-success { box-shadow: 0 4px 15px rgba(40,167,69,0.3); }

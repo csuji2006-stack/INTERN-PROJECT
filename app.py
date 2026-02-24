@@ -1,4 +1,5 @@
 from flask import Flask, request
+from flask_cors import CORS
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
@@ -6,12 +7,13 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 app = Flask(__name__)
+CORS(app)
 
 # Global ML Model
 model = None
 training_stats = {}
 
-def generate_irrigation_data(n=5000):
+def generate_irrigation_data(n=8000):
     np.random.seed(42)
     data = {
         'soil_moisture': np.random.uniform(5, 85, n),
@@ -122,20 +124,30 @@ def home():
         </div>
         
         <script>
-        document.getElementById('predictForm').onsubmit = function(e) {{
+        document.getElementById('predictForm').onsubmit = async function(e) {{
             e.preventDefault();
             const soil = parseFloat(document.getElementById('soil').value);
             const temp = parseFloat(document.getElementById('temp').value);
             const hum = parseFloat(document.getElementById('hum').value);
             const rain = parseFloat(document.getElementById('rain').value);
             
-            const needs_water = soil < 35 && temp > 30 && hum < 60 && rain < 50;
-            const water_qty = needs_water ? 25 * (35 - soil) * (temp / 30) : 0;
+            const response = await fetch('/predict', {{
+                method: 'POST',
+                headers: {{ 'Content-Type': 'application/json' }},
+                body: JSON.stringify({{
+                    soil_moisture: soil,
+                    temperature: temp,
+                    humidity: hum,
+                    rainfall_historical: rain
+                }})
+            }});
+            const result = await response.json();
             
             document.getElementById('result').innerHTML = `
-                <div class="alert ${{needs_water ? 'result-yes' : 'result-no'}} p-4">
-                    <h3><strong>${{needs_water ? '🚿 YES' : '✅ NO'}}</strong> Irrigation!</h3>
-                    <h4>💧 ${{water_qty.toFixed(1)}} Liters</h4>
+                <div class="alert ${{result.needs_water ? 'result-yes' : 'result-no'}} p-4">
+                    <h3><strong>${{result.needs_water ? '🚿 YES' : '✅ NO'}}</strong> Irrigation!</h3>
+                    <h4>💧 ${{result.water_qty}} Liters</h4>
+                    <p>Confidence: ${{ (result.probability * 100).toFixed(1) }}%</p>
                     <hr>
                     <small>Soil: ${{soil}}% | Temp: ${{temp}}°C | Hum: ${{hum}}% | Rain: ${{rain}}mm</small>
                 </div>`;
@@ -146,5 +158,33 @@ def home():
     """
     return html
 
-if __name__ == '_main_':
-    app.run(debug=True, port=5000, host='127.0.0.1')
+@app.route('/predict', methods=['POST'])
+def predict():
+    if model is None:
+        train_model()
+    
+    data = request.get_json()
+    print("Received data:", data)
+    soil = float(data['soil_moisture'])
+    temp = float(data['temperature'])
+    hum = float(data['humidity'])
+    rain = float(data['rainfall_historical'])
+    
+    input_data = [[soil, temp, hum, rain]]
+    print("Input data:", input_data)
+    prediction = model.predict(input_data)[0]
+    probability = model.predict_proba(input_data)[0][1]  # prob of 1
+    
+    needs_water = prediction == 1
+    water_qty = 0
+    if needs_water:
+        water_qty = round(25 * (35 - soil) * (temp / 30), 1)
+    
+    return {
+        'needs_water': bool(needs_water),
+        'water_qty': float(water_qty),
+        'probability': float(round(probability, 2))
+    }
+
+if __name__ == '__main__':
+    app.run(port="8000", host='127.0.0.1')
